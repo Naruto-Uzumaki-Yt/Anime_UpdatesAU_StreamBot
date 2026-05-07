@@ -48,8 +48,7 @@ async def file_handler(client, message):
         file.file_id,
         file.file_name,
         file.file_size
-    )
-    add_language(key, lang, file.file_id)
+    )    
     set_user_last(message.from_user.id, key)
 
     await message.reply(f"""
