@@ -1,8 +1,9 @@
 # ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Don't Remove Credit
+# Ask Doubt @AU_Bot_Discussion
+# Owner @Mr_Mohammed_29
 # ------------------------- #
+
 from flask import Flask, Response, render_template_string
 from pyrogram import Client
 from database import get_file, get_subtitles
@@ -11,14 +12,18 @@ import config
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024 * 1024
 
-tg = Client("stream",
-            api_id=config.API_ID,
-            api_hash=config.API_HASH,
-            bot_token=config.BOT_TOKEN)
+tg = Client(
+    "stream",
+    api_id=config.API_ID,
+    api_hash=config.API_HASH,
+    bot_token=config.BOT_TOKEN
+)
+
 tg.start()
 
 @app.route("/stream/<key>")
 def stream(key):
+
     file = get_file(key)
 
     if not file:
@@ -26,9 +31,6 @@ def stream(key):
 
     video_url = f"/video/{key}"
 
-    lang_btn = ""
-    for l in file["langs"]:
-        lang_btn += f'<a class="btn" href="/play/{key}/{l}">{l.upper()}</a>'
     subs = get_subtitles(key)
 
     tracks = ""
@@ -41,83 +43,149 @@ def stream(key):
         label="{lang.upper()}"
         {"default" if i == 0 else ""}
         >
-        ''' 
+        '''
+
     return render_template_string(f"""
+
 <html>
+
 <head>
+
 <meta name="viewport" content="width=device-width">
+
 <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet"/>
 <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
 <style>
-body {{background:#0d0d0d;color:white;margin:0}}
-.top {{background:#111;padding:10px}}
-.btn {{display:block;background:#00c853;padding:10px;margin:5px;color:white;text-align:center;text-decoration:none}}
+
+body {{
+    background: #0d0d0d;
+    color: white;
+    margin: 0;
+    font-family: sans-serif;
+}}
+
+.top {{
+    background: #111;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}}
+
+.banner img {{
+    width: 100%;
+}}
+
+.container {{
+    padding: 10px;
+}}
+
+.btn {{
+    display: block;
+    background: #00c853;
+    padding: 12px;
+    margin-top: 10px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+}}
+
+.footer {{
+    margin-top: 20px;
+}}
+
 </style>
 
 </head>
+
 <body>
 
-<div class="top">📺 {config.CHANNEL_USERNAME}</div>
-
-<video id="player" class="video-js" controls preload="metadata" width="100%">
-<source src="{video_url}" type="video/mp4">
-{tracks}
-</video>
-
-<a class="btn" href="{video_url}">⬇️ Download</a>
-
-<div>
-<h3>🎧 Languages</h3>
-{lang_btn}
+<div class="top">
+📺 {config.CHANNEL_USERNAME}
 </div>
 
-<div>
-<a class="btn" href="{config.CHANNEL_LINK}">Updates</a>
-<a class="btn" href="{config.DEV_LINK}">Developer</a>
+<div class="banner">
+<img src="{config.THUMB_URL}">
+</div>
+
+<div class="container">
+
+<video
+id="player"
+class="video-js vjs-default-skin"
+controls
+preload="auto"
+width="100%"
+height="240"
+data-setup='{{}}'>
+
+<source src="{video_url}" type="video/mp4">
+
+{tracks}
+
+</video>
+
+<a class="btn" href="{video_url}">
+⬇️ Download
+</a>
+
+<div class="footer">
+
+<a class="btn" href="{config.CHANNEL_LINK}">
+📢 Updates Channel
+</a>
+
+<a class="btn" href="{config.DEV_LINK}">
+👨‍💻 Developer
+</a>
+
+</div>
+
 </div>
 
 </body>
 </html>
+
 """)
 
 @app.route("/video/<key>")
-def video(key):
-    file = get_file(key)
-    range_header = request.headers.get('Range')
+async def video(key):
 
-    async def gen(start=0):
-        async for chunk in tg.stream_media(file["file_id"], offset=start):
+    file = get_file(key)
+
+    if not file:
+        return "Invalid File"
+
+    async def generate():
+
+        async for chunk in tg.stream_media(file["file_id"]):
             yield chunk
 
-    if range_header:
-        start = int(range_header.replace("bytes=", "").split("-")[0])
-        return Response(gen(start), status=206,
-                        content_type="video/mp4",
-                        headers={"Accept-Ranges": "bytes"})
-    else:
-        return Response(gen(),
-                        content_type="video/mp4",
-                        headers={"Accept-Ranges": "bytes"})
-
-@app.route("/play/<key>/<lang>")
-def play(key, lang):
-    file = get_file(key)
-    if lang in file["langs"]:
-        file["file_id"] = file["langs"][lang]
-    return stream(key)
+    return Response(
+        generate(),
+        content_type="video/mp4",
+        headers={
+            "Accept-Ranges": "bytes"
+        }
+    )
 
 @app.route("/sub/<key>/<lang>")
 def sub(key, lang):
-    file = get_file(key)
+
     subs = get_subtitles(key)
 
     if lang not in subs:
-         return "No subtitle"
-    return Response(subs[lang], content_type="text/vtt")
+        return "No subtitle"
+
+    return Response(
+        subs[lang],
+        content_type="text/vtt"
+    )
 
 # ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Don't Remove Credit
+# Ask Doubt @AU_Bot_Discussion
+# Owner @Mr_Mohammed_29
 # ------------------------- #
