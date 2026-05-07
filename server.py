@@ -3,10 +3,9 @@
 # Ask Doubt @AU_Bot_Discussion 
 # Owner @Mr_Mohammed_29 
 # ------------------------- #
-
 from flask import Flask, Response, request, render_template_string
 from pyrogram import Client
-from database import get_file
+from database import get_file, get_subtitles
 import config
 
 app = Flask(__name__)
@@ -23,24 +22,29 @@ def stream(key):
 
     if not file:
         return "Invalid"
-    if not file:
-        return "Invalid"
 
     video_url = f"/video/{key}"
 
     lang_btn = ""
     for l in file["langs"]:
         lang_btn += f'<a class="btn" href="/play/{key}/{l}">{l.upper()}</a>'
+    subs = get_subtitles(key)
 
     tracks = ""
-    for i, (lang, _) in enumerate(file["subs"].items()):
-        tracks += f'<track kind="subtitles" src="/sub/{key}/{lang}" srclang="{lang}" label="{lang.upper()}" {"default" if i==0 else ""}>'
 
+    for i, (lang, _) in enumerate(subs.items()):
+        tracks += f'''
+        <track kind="subtitles"
+        src="/sub/{key}/{lang}"
+        srclang="{lang}"
+        label="{lang.upper()}"
+        {"default" if i == 0 else ""}
+        >
+        ''' 
     return render_template_string(f"""
 <html>
 <head>
 <meta name="viewport" content="width=device-width">
-
 <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet"/>
 <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
@@ -105,8 +109,10 @@ def play(key, lang):
 @app.route("/sub/<key>/<lang>")
 def sub(key, lang):
     file = get_file(key)
-    if lang not in file["subs"]:
-        return "No subtitle"
+    subs = get_subtitles(key)
+
+    if lang not in subs:
+         return "No subtitle"
     return Response(file["subs"][lang], content_type="text/vtt")
 
 # ------------------------- #
