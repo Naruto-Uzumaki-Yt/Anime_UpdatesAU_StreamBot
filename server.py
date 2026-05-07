@@ -8,6 +8,7 @@ from flask import Flask, Response, render_template_string
 from pyrogram import Client
 from database import get_file, get_subtitles
 import config
+import asyncio
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024 * 1024
@@ -150,18 +151,35 @@ data-setup='{{}}'>
 
 """)
 
+import asyncio
+
+
 @app.route("/video/<key>")
-async def video(key):
+def video(key):
 
     file = get_file(key)
 
     if not file:
         return "Invalid File"
 
-    async def generate():
+    async def stream_generator():
 
         async for chunk in tg.stream_media(file["file_id"]):
             yield chunk
+
+    def generate():
+
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        agen = stream_generator()
+
+        while True:
+            try:
+                chunk = loop.run_until_complete(agen.__anext__())
+                yield chunk
+            except StopAsyncIteration:
+                break
 
     return Response(
         generate(),
@@ -170,7 +188,6 @@ async def video(key):
             "Accept-Ranges": "bytes"
         }
     )
-
 @app.route("/sub/<key>/<lang>")
 def sub(key, lang):
 
