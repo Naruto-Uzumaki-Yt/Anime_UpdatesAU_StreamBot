@@ -3,12 +3,13 @@
 # Ask Doubt @AU_Bot_Discussion 
 # Owner @Mr_Mohammed_29 
 # ------------------------- #
-from flask import Flask, Response, request, render_template_string
+from flask import Flask, Response, render_template_string
 from pyrogram import Client
 from database import get_file, get_subtitles
 import config
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024 * 1024
 
 tg = Client("stream",
             api_id=config.API_ID,
