@@ -4,17 +4,19 @@
 # Owner @Mr_Mohammed_29 
 # ------------------------- #
 
-API_ID = 123456
-API_HASH = "your_api_hash"
-BOT_TOKEN = "your_bot_token"
+import os
 
-BASE_URL = "https://your-app.onrender.com"
+API_ID = int(os.getenv("API_ID"))
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-CHANNEL_USERNAME = "Anime Updates"
-CHANNEL_LINK = "https://t.me/Anime_UpdatesAU"
+BASE_URL = os.getenv("BASE_URL")
 
-DEV_NAME = "Mohammed"
-DEV_LINK = "https://t.me/Mr_Mohammed_29"
+CHANNEL_USERNAME = os.getenv("CHANNEL_USERNAME")
+CHANNEL_LINK = os.getenv("CHANNEL_LINK")
+
+DEV_NAME = os.getenv("DEV_NAME")
+DEV_LINK = os.getenv("DEV_LINK")
 
 # ------------------------- #
 # Don't Remove Credit 
