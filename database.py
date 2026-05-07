@@ -4,37 +4,71 @@
 # Owner @Mr_Mohammed_29 
 # ------------------------- #
 
-import uuid
+import sqlite3
 
-files_db = {}
-user_last = {}
+conn = sqlite3.connect("files.db", check_same_thread=False)
+cur = conn.cursor()
 
-def save_file(file_id, file_name, file_size):
-    key = str(uuid.uuid4())[:8]
+cur.execute("""
+CREATE TABLE IF NOT EXISTS files (
+    file_key TEXT PRIMARY KEY,
+    file_id TEXT,
+    file_name TEXT,
+    file_size INTEGER
+)
+""")
 
-    files_db[key] = {
-        "file_id": file_id,
-        "file_name": file_name,
-        "file_size": file_size,
-        "langs": {},
-        "subs": {}
-    }
-    return key
+cur.execute("""
+CREATE TABLE IF NOT EXISTS subtitles (
+    file_key TEXT,
+    lang TEXT,
+    content TEXT
+)
+""")
+
+conn.commit()
+
+def save_file(key, file_id, file_name, file_size):
+    cur.execute(
+        "INSERT INTO files VALUES (?, ?, ?, ?)",
+        (key, file_id, file_name, file_size)
+    )
+    conn.commit()
 
 def get_file(key):
-    return files_db.get(key)
+    cur.execute(
+        "SELECT * FROM files WHERE file_key=?",
+        (key,)
+    )
 
-def add_language(key, lang, file_id):
-    files_db[key]["langs"][lang] = file_id
+    row = cur.fetchone()
+
+    if not row:
+        return None
+
+    return {
+        "file_key": row[0],
+        "file_id": row[1],
+        "file_name": row[2],
+        "file_size": row[3]
+    }
 
 def add_subtitle(key, lang, content):
-    files_db[key]["subs"][lang] = content
+    cur.execute(
+        "INSERT INTO subtitles VALUES (?, ?, ?)",
+        (key, lang, content)
+    )
+    conn.commit()
 
-def set_user_last(user_id, key):
-    user_last[user_id] = key
+def get_subtitles(key):
+    cur.execute(
+        "SELECT lang, content FROM subtitles WHERE file_key=?",
+        (key,)
+    )
 
-def get_user_last(user_id):
-    return user_last.get(user_id)
+    rows = cur.fetchall()
+
+    return {r[0]: r[1] for r in rows}
 
 # ------------------------- #
 # Don't Remove Credit 
