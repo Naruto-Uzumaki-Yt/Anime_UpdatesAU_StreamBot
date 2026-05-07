@@ -20,6 +20,9 @@ tg.start()
 @app.route("/stream/<key>")
 def stream(key):
     file = get_file(key)
+
+    if not file:
+        return "Invalid"
     if not file:
         return "Invalid"
 
