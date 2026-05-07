@@ -113,7 +113,7 @@ def sub(key, lang):
 
     if lang not in subs:
          return "No subtitle"
-    return Response(file["subs"][lang], content_type="text/vtt")
+    return Response(subs[lang], content_type="text/vtt")
 
 # ------------------------- #
 # Don't Remove Credit 
