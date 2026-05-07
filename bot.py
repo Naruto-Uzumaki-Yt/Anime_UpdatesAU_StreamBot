@@ -8,7 +8,7 @@ from pyrogram import Client, filters
 from pyrogram.errors import UserNotParticipant
 import config
 import uuid
-from database import *
+from database import save_file, add_subtitle
 
 app = Client("bot",
              api_id=config.API_ID,
@@ -48,8 +48,7 @@ async def file_handler(client, message):
         file.file_id,
         file.file_name,
         file.file_size
-    )    
-    set_user_last(message.from_user.id, key)
+    ) 
 
     await message.reply(f"""
 📁 {file.file_name}
