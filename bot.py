@@ -7,6 +7,7 @@
 from pyrogram import Client, filters
 from pyrogram.errors import UserNotParticipant
 import config
+import uuid
 from database import *
 
 app = Client("bot",
@@ -40,7 +41,14 @@ async def file_handler(client, message):
     else:
         lang = "main"
 
-    key = save_file(file.file_id, file.file_name, file.file_size)
+    key = str(uuid.uuid4())[:8]
+
+    save_file(
+        key,
+        file.file_id,
+        file.file_name,
+        file.file_size
+    )
     add_language(key, lang, file.file_id)
     set_user_last(message.from_user.id, key)
 
