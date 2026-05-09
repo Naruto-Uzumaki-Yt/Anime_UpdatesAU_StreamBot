@@ -131,7 +131,7 @@ preload="auto"
 playsinline
 data-setup='{{}}'>
 
-<source src="{video_url}" type="video/mp4">
+<source src="{video_url}" type="video/x-matroska">
 
 {tracks}
 
