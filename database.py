@@ -1,3 +1,4 @@
+
 # ------------------------- #
 # Don't Remove Credit
 # Ask Doubt @AU_Bot_Discussion
@@ -16,6 +17,8 @@ conn = sqlite3.connect(
     check_same_thread=False
 )
 
+conn.row_factory = sqlite3.Row
+
 cur = conn.cursor()
 
 lock = threading.Lock()
@@ -31,7 +34,8 @@ CREATE TABLE IF NOT EXISTS files (
     file_key TEXT PRIMARY KEY,
     file_id TEXT,
     file_name TEXT,
-    file_size INTEGER
+    file_size INTEGER,
+    mime_type TEXT DEFAULT 'video/x-matroska'
 
 )
 
@@ -53,6 +57,21 @@ CREATE TABLE IF NOT EXISTS subtitles (
 
 """)
 
+# =========================
+# USER LAST FILE TABLE
+# =========================
+
+cur.execute("""
+
+CREATE TABLE IF NOT EXISTS users (
+
+    user_id INTEGER PRIMARY KEY,
+    last_file_key TEXT
+
+)
+
+""")
+
 conn.commit()
 
 # =========================
@@ -63,7 +82,8 @@ def save_file(
     key,
     file_id,
     file_name,
-    file_size
+    file_size,
+    mime_type="video/x-matroska"
 ):
 
     with lock:
@@ -71,13 +91,21 @@ def save_file(
         cur.execute(
             """
             INSERT OR REPLACE INTO files
-            VALUES (?, ?, ?, ?)
+            (
+                file_key,
+                file_id,
+                file_name,
+                file_size,
+                mime_type
+            )
+            VALUES (?, ?, ?, ?, ?)
             """,
             (
                 key,
                 file_id,
                 file_name,
-                file_size
+                file_size,
+                mime_type
             )
         )
 
@@ -93,7 +121,8 @@ def get_file(key):
 
         cur.execute(
             """
-            SELECT * FROM files
+            SELECT *
+            FROM files
             WHERE file_key=?
             """,
             (key,)
@@ -106,10 +135,11 @@ def get_file(key):
 
     return {
 
-        "file_key": row[0],
-        "file_id": row[1],
-        "file_name": row[2],
-        "file_size": row[3]
+        "file_key": row["file_key"],
+        "file_id": row["file_id"],
+        "file_name": row["file_name"],
+        "file_size": row["file_size"],
+        "mime_type": row["mime_type"]
 
     }
 
@@ -160,10 +190,58 @@ def get_subtitles(key):
 
     return {
 
-        row[0]: row[1]
+        row["lang"]: row["content"]
         for row in rows
 
     }
+
+# =========================
+# SAVE USER LAST FILE
+# =========================
+
+def set_user_last(
+    user_id,
+    key
+):
+
+    with lock:
+
+        cur.execute(
+            """
+            INSERT OR REPLACE INTO users
+            VALUES (?, ?)
+            """,
+            (
+                user_id,
+                key
+            )
+        )
+
+        conn.commit()
+
+# =========================
+# GET USER LAST FILE
+# =========================
+
+def get_user_last(user_id):
+
+    with lock:
+
+        cur.execute(
+            """
+            SELECT last_file_key
+            FROM users
+            WHERE user_id=?
+            """,
+            (user_id,)
+        )
+
+        row = cur.fetchone()
+
+    if not row:
+        return None
+
+    return row["last_file_key"]
 
 # =========================
 # DELETE FILE
