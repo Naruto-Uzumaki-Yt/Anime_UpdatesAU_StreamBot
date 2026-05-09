@@ -6,13 +6,20 @@
 
 from pyrogram import Client, filters
 from pyrogram.errors import UserNotParticipant
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
+
 import asyncio
 import config
 import uuid
+
 from database import (
     save_file,
-    add_subtitle
+    add_subtitle,
+    set_user_last,
+    get_user_last
 )
 
 app = Client(
@@ -22,15 +29,13 @@ app = Client(
     bot_token=config.BOT_TOKEN
 )
 
-# STORE LAST FILE KEY
-LAST_FILES = {}
-
 # ================= FORCE SUB ================= #
 
 async def check_join(client, user_id):
 
     try:
-        member = await client.get_chat_member(
+
+        await client.get_chat_member(
             config.CHANNEL_USERNAME,
             user_id
         )
@@ -38,9 +43,11 @@ async def check_join(client, user_id):
         return True
 
     except UserNotParticipant:
+
         return False
 
     except:
+
         return True
 
 # ================= START ================= #
@@ -73,19 +80,7 @@ async def start_cmd(client, message):
         "CAACAgQAAxkBAAPZafuA9gQjLstGU0j8kmlDj2-P2A0AAqoaAALVH9BRmAWPD58ZL6keBA"
     )
 
-    # ================= START MESSAGE ================= #
-
-    text = f"""
-✨ **Welcome to {config.CHANNEL_USERNAME} Stream Bot**
-
-🎬 Send Any Video/File
-📺 Get Instant Streaming Link
-⬇️ Direct Download Link
-🌍 Multi Audio Support
-📝 Subtitle Support
-
-⚡ Powered By Anime Updates AU
-"""
+    # ================= BUTTONS ================= #
 
     buttons = InlineKeyboardMarkup(
         [
@@ -115,8 +110,23 @@ async def start_cmd(client, message):
         ]
     )
 
+    # ================= START MESSAGE ================= #
+
     await message.reply_text(
-        text,
+        f"""
+
+✨ **Welcome to {config.CHANNEL_USERNAME} Stream Bot**
+
+🎬 Send Any Video/File
+📺 Instant Streaming Link
+⬇️ Direct Download Link
+🌍 Multi Audio Support
+📝 Subtitle Support
+🎞 MKV + MP4 Supported
+
+⚡ Powered By Anime_UpdatesAU
+
+        """,
         reply_markup=buttons
     )
 
@@ -129,17 +139,21 @@ async def callbacks(client, query):
 
         await query.message.edit_text(
             """
+
 ❓ **Help Menu**
 
 1. Send Video/File
 2. Bot Generates Stream Link
-3. Open Stream Online
+3. Watch Online
 4. Download Directly
+5. Open in VLC / MX Player
 
-📝 Supported:
-• MP4
+📝 Supported Formats:
 • MKV
-• Subtitle Files
+• MP4
+• SRT
+• VTT
+
             """,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -157,14 +171,24 @@ async def callbacks(client, query):
 
         await query.message.edit_text(
             f"""
+
 ℹ️ **About Bot**
 
-📺 Name: {config.CHANNEL_USERNAME}
-⚡ Based On Pyrogram + Flask
-🌐 Render Streaming System
-🎬 Multi Audio + Subtitle Support
+📺 Name:
+{config.CHANNEL_USERNAME}
+
+⚡ Server:
+Render Streaming
+
+🎬 Features:
+• Multi Audio
+• Subtitle Support
+• MKV Streaming
+• Direct Download
+
 👨‍💻 Developer:
 {config.DEV_NAME}
+
             """,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -179,16 +203,6 @@ async def callbacks(client, query):
         )
 
     elif query.data == "back":
-
-        text = f"""
-✨ **Welcome to {config.CHANNEL_USERNAME} Stream Bot**
-
-🎬 Send Any Video/File
-📺 Get Instant Streaming Link
-⬇️ Direct Download Link
-🌍 Multi Audio Support
-📝 Subtitle Support
-        """
 
         buttons = InlineKeyboardMarkup(
             [
@@ -219,7 +233,19 @@ async def callbacks(client, query):
         )
 
         await query.message.edit_text(
-            text,
+            f"""
+
+✨ **Welcome to {config.CHANNEL_USERNAME} Stream Bot**
+
+🎬 Send Any Video/File
+📺 Instant Streaming Link
+⬇️ Direct Download Link
+🌍 Multi Audio Support
+📝 Subtitle Support
+
+⚡ Powered By Anime_UpdatesAU
+
+            """,
             reply_markup=buttons
         )
 
@@ -231,45 +257,92 @@ async def callbacks(client, query):
 )
 async def file_handler(client, message):
 
-    if not await check_join(client, message.from_user.id):
+    if not await check_join(
+        client,
+        message.from_user.id
+    ):
 
-        return await message.reply(
-            f"🚫 Join Updates Channel First:\n{config.CHANNEL_LINK}"
+        return await message.reply_text(
+            f"""
+
+🚫 Join Updates Channel First
+
+🔗 {config.CHANNEL_LINK}
+
+            """
         )
 
     file = message.video or message.document
 
     if not file.file_name:
-        return await message.reply("❌ File name missing")
+
+        return await message.reply_text(
+            "❌ File Name Missing"
+        )
 
     key = str(uuid.uuid4())[:8]
+
+    mime_type = (
+        file.mime_type
+        if file.mime_type
+        else "video/x-matroska"
+    )
 
     save_file(
         key,
         file.file_id,
         file.file_name,
-        file.file_size
+        file.file_size,
+        mime_type
     )
 
     # SAVE LAST FILE
-    LAST_FILES[message.from_user.id] = key
+    set_user_last(
+        message.from_user.id,
+        key
+    )
 
-    size = round(file.file_size / (1024 ** 3), 2)
+    size = round(
+        file.file_size / (1024 ** 3),
+        2
+    )
 
-    stream_link = f"{config.BASE_URL}/stream/{key}"
-    download_link = f"{config.BASE_URL}/video/{key}"
+    stream_link = (
+        f"{config.BASE_URL}/stream/{key}"
+    )
 
-    await message.reply_text(f"""
+    download_link = (
+        f"{config.BASE_URL}/video/{key}"
+    )
+
+    buttons = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    "🎬 Stream",
+                    url=stream_link
+                ),
+
+                InlineKeyboardButton(
+                    "⬇️ Download",
+                    url=download_link
+                )
+            ]
+        ]
+    )
+
+    await message.reply_text(
+        f"""
+
 📁 {file.file_name}
 
 📦 Size: {size} GB
 
-🎬 Stream Link:
-{stream_link}
+✅ File Saved Successfully
 
-⬇️ Download Link:
-{download_link}
-""")
+        """,
+        reply_markup=buttons
+    )
 
 # ================= SUBTITLE HANDLER ================= #
 
@@ -287,19 +360,25 @@ async def subtitle_handler(client, message):
     name = file.file_name.lower()
 
     if not (
-        name.endswith(".srt") or
+        name.endswith(".srt")
+        or
         name.endswith(".vtt")
     ):
         return
 
-    key = LAST_FILES.get(message.from_user.id)
+    key = get_user_last(
+        message.from_user.id
+    )
 
     if not key:
-        return await message.reply(
-            "❌ Send video first"
+
+        return await message.reply_text(
+            "❌ Send Video First"
         )
 
     path = await message.download()
+
+    # ================= SRT TO VTT ================= #
 
     def srt_to_vtt(text):
 
@@ -326,19 +405,25 @@ async def subtitle_handler(client, message):
         content = f.read()
 
     if name.endswith(".srt"):
+
         content = srt_to_vtt(content)
 
-    # DETECT SUBTITLE LANGUAGE
+    # ================= DETECT LANGUAGE ================= #
+
     if "eng" in name:
+
         lang = "en"
 
     elif "hin" in name:
+
         lang = "hi"
 
     elif "jap" in name:
+
         lang = "jp"
 
     else:
+
         lang = "sub"
 
     add_subtitle(
@@ -347,8 +432,14 @@ async def subtitle_handler(client, message):
         content
     )
 
-    await message.reply(
-        "✅ Subtitle Added Successfully"
+    await message.reply_text(
+        f"""
+
+✅ Subtitle Added Successfully
+
+🌍 Language: {lang.upper()}
+
+        """
     )
 
 # ================= RUN ================= #
