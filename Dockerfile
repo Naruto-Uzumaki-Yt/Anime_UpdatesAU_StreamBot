@@ -1,4 +1,3 @@
-
 # ------------------------- #
 # Don't Remove Credit
 # Ask Doubt @AU_Bot_Discussion
@@ -25,6 +24,7 @@ COPY . /app
 
 RUN apt-get update && apt-get install -y \
     gcc \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir -r requirements.txt
@@ -39,7 +39,12 @@ ENV PORT=10000
 # START BOT + SERVER
 # =========================
 
-CMD gunicorn server:app --workers 1 --threads 1 --bind 0.0.0.0:$PORT & python bot.py
+CMD gunicorn server:app \
+--bind 0.0.0.0:$PORT \
+--workers 1 \
+--threads 2 \
+--timeout 300 \
+& python bot.py
 
 # ------------------------- #
 # Don't Remove Credit
