@@ -43,7 +43,7 @@ DEV_LINK = os.getenv(
 # Thumbnail Banner URL
 THUMB_URL = os.getenv(
     "THUMB_URL",
-    "https://envs.sh/Gz2.jpg"
+    "https://graph.org/file/36d25a323cdb47771fc25-2fc82e37a064533474.jpg"
 )
 
 # ------------------------- #
