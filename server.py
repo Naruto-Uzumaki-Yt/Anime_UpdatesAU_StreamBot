@@ -8,7 +8,6 @@ from flask import Flask, Response, render_template_string, request
 from pyrogram import Client
 from database import get_file, get_subtitles
 import config
-from threading import Thread
 import os
 
 app = Flask(__name__)
@@ -348,6 +347,8 @@ var player = videojs('player');
 
 </body>
 </html>
+
+""")
 
 # ========================= VIDEO STREAM ========================= #
 
