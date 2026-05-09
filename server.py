@@ -173,22 +173,24 @@ def video(key):
     if not file:
         return "Invalid File"
 
-    async def generate():
+    async def stream_generator():
 
         async for chunk in tg.stream_media(file["file_id"]):
             yield chunk
 
-    loop = asyncio.get_event_loop()
+    def generate():
 
-    async_gen = generate()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
-    def sync_stream():
+        agen = stream_generator()
 
         while True:
 
             try:
+
                 chunk = loop.run_until_complete(
-                    async_gen.__anext__()
+                    agen.__anext__()
                 )
 
                 yield chunk
@@ -196,9 +198,11 @@ def video(key):
             except StopAsyncIteration:
                 break
 
+        loop.close()
+
     return Response(
-        sync_stream(),
-        content_type="video/mp4",
+        generate(),
+        content_type="video/x-matroska",
         headers={
             "Accept-Ranges": "bytes"
         }
