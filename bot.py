@@ -6,6 +6,8 @@
 
 from pyrogram import Client, filters
 from pyrogram.errors import UserNotParticipant
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+import asyncio
 import config
 import uuid
 from database import (
@@ -46,17 +48,180 @@ async def check_join(client, user_id):
 @app.on_message(filters.command("start") & filters.private)
 async def start_cmd(client, message):
 
-    await message.reply_text(f"""
-👋 Welcome to {config.CHANNEL_USERNAME}
+    # ================= START ANIMATION ================= #
 
-📥 Send Video/File
-🎬 Get Stream Link
-🌐 Watch Online
-⬇️ Download Directly
+    m = await message.reply_text(
+        "ᴍᴏɴᴋᴇʏ ᴅ ʟᴜғғʏ\nɢᴇᴀʀ 𝟻..."
+    )
 
-📢 Updates:
-{config.CHANNEL_LINK}
-""")
+    await asyncio.sleep(0.5)
+    await m.edit_text("🎊")
+
+    await asyncio.sleep(0.5)
+    await m.edit_text("🚀")
+
+    await asyncio.sleep(0.5)
+    await m.edit_text("sᴜɴ ɢᴏᴅ ɴɪᴋᴀ!...")
+
+    await asyncio.sleep(0.5)
+
+    await m.delete()
+
+    # ================= STICKER ================= #
+
+    await message.reply_sticker(
+        "CAACAgQAAxkBAAPZafuA9gQjLstGU0j8kmlDj2-P2A0AAqoaAALVH9BRmAWPD58ZL6keBA"
+    )
+
+    # ================= START MESSAGE ================= #
+
+    text = f"""
+✨ **Welcome to {config.CHANNEL_USERNAME} Stream Bot**
+
+🎬 Send Any Video/File
+📺 Get Instant Streaming Link
+⬇️ Direct Download Link
+🌍 Multi Audio Support
+📝 Subtitle Support
+
+⚡ Powered By Anime Updates AU
+"""
+
+    buttons = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    "❓ Help",
+                    callback_data="help"
+                ),
+
+                InlineKeyboardButton(
+                    "ℹ️ About",
+                    callback_data="about"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    "📢 Updates",
+                    url=config.CHANNEL_LINK
+                ),
+
+                InlineKeyboardButton(
+                    "👨‍💻 Owner",
+                    url=config.DEV_LINK
+                )
+            ]
+        ]
+    )
+
+    await message.reply_text(
+        text,
+        reply_markup=buttons
+    )
+
+# ================= CALLBACKS ================= #
+
+@app.on_callback_query()
+async def callbacks(client, query):
+
+    if query.data == "help":
+
+        await query.message.edit_text(
+            """
+❓ **Help Menu**
+
+1. Send Video/File
+2. Bot Generates Stream Link
+3. Open Stream Online
+4. Download Directly
+
+📝 Supported:
+• MP4
+• MKV
+• Subtitle Files
+            """,
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            "🔙 Back",
+                            callback_data="back"
+                        )
+                    ]
+                ]
+            )
+        )
+
+    elif query.data == "about":
+
+        await query.message.edit_text(
+            f"""
+ℹ️ **About Bot**
+
+📺 Name: {config.CHANNEL_USERNAME}
+⚡ Based On Pyrogram + Flask
+🌐 Render Streaming System
+🎬 Multi Audio + Subtitle Support
+👨‍💻 Developer:
+{config.DEV_NAME}
+            """,
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            "🔙 Back",
+                            callback_data="back"
+                        )
+                    ]
+                ]
+            )
+        )
+
+    elif query.data == "back":
+
+        text = f"""
+✨ **Welcome to {config.CHANNEL_USERNAME} Stream Bot**
+
+🎬 Send Any Video/File
+📺 Get Instant Streaming Link
+⬇️ Direct Download Link
+🌍 Multi Audio Support
+📝 Subtitle Support
+        """
+
+        buttons = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "❓ Help",
+                        callback_data="help"
+                    ),
+
+                    InlineKeyboardButton(
+                        "ℹ️ About",
+                        callback_data="about"
+                    )
+                ],
+
+                [
+                    InlineKeyboardButton(
+                        "📢 Updates",
+                        url=config.CHANNEL_LINK
+                    ),
+
+                    InlineKeyboardButton(
+                        "👨‍💻 Owner",
+                        url=config.DEV_LINK
+                    )
+                ]
+            ]
+        )
+
+        await query.message.edit_text(
+            text,
+            reply_markup=buttons
+        )
 
 # ================= FILE HANDLER ================= #
 
