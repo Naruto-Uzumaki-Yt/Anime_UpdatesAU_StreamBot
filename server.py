@@ -350,6 +350,7 @@ var player = videojs('player');
 </html>
 
 # ========================= VIDEO STREAM ========================= #
+
 @app.route("/video/<key>")
 def video(key):
 
@@ -358,18 +359,11 @@ def video(key):
     if not file:
         return "Invalid File"
 
-    temp_path = f"temp_{key}.mkv"
-
-    if not os.path.exists(temp_path):
-
-        tg.download_media(
-            file["file_id"],
-            file_name=temp_path
-        )
+    file_path = tg.download_media(file["file_id"])
 
     def generate():
 
-        with open(temp_path, "rb") as f:
+        with open(file_path, "rb") as f:
 
             while True:
 
@@ -382,9 +376,10 @@ def video(key):
 
     return Response(
         generate(),
-        content_type="video/x-matroska",
         headers={
-            "Accept-Ranges": "bytes"
+            "Content-Type": "video/x-matroska",
+            "Accept-Ranges": "bytes",
+            "Content-Disposition": f'inline; filename="{file["file_name"]}"'
         }
     )
 
