@@ -1,16 +1,18 @@
 # ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Don't Remove Credit
+# Ask Doubt @AU_Bot_Discussion
+# Owner @Mr_Mohammed_29
 # ------------------------- #
 
-pyrogram
+pyrogram==2.0.106
 tgcrypto
-flask
-gunicorn
+flask==3.0.3
+gunicorn==23.0.0
+aiohttp
+asyncio
 
 # ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Don't Remove Credit
+# Ask Doubt @AU_Bot_Discussion
+# Owner @Mr_Mohammed_29
 # ------------------------- #
