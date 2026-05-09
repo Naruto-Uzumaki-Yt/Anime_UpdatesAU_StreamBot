@@ -62,99 +62,285 @@ def stream(key):
 <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet"/>
 <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
-<style>
-
-body {{
-    background: #0d0d0d;
-    color: white;
-    margin: 0;
-    font-family: sans-serif;
-}}
-
-.top {{
-    background: #111;
-    padding: 15px;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-}}
-
-.banner img {{
-    width: 100%;
-}}
-
-.container {{
-    padding: 10px;
-}}
-
-.btn {{
-    display: block;
-    background: #00c853;
-    padding: 12px;
-    margin-top: 10px;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-}}
-
-.footer {{
-    margin-top: 20px;
-}}
-
-video {{
-    width: 100%;
-    border-radius: 10px;
-}}
-
-</style>
+<title>Anime_UpdatesAU Stream</title>
 
 </head>
 
 <body>
 
-<div class="top">
-📺 {config.CHANNEL_USERNAME}
+<!-- ========================= HEADER ========================= -->
+
+<div class="topbar">
+
+    <div class="logo">
+        Anime_UpdatesAU
+    </div>
+
+    <div class="menu-btn">
+        ☰
+    </div>
+
 </div>
 
-<div class="banner">
-<img src="{config.THUMB_URL}">
+<!-- ========================= HERO TEXT ========================= -->
+
+<div class="hero">
+
+    <h1>
+        Stream Effortlessly,
+        <span>Anytime, Anywhere</span>
+    </h1>
+
 </div>
 
-<div class="container">
+<!-- ========================= VIDEO PLAYER ========================= -->
 
-<video
-id="player"
-class="video-js vjs-default-skin"
-controls
-preload="auto"
-playsinline
-data-setup='{{}}'>
+<div class="player-box">
 
-<source src="{video_url}" type="video/x-matroska">
+    <video
+        id="player"
+        class="video-js vjs-default-skin"
+        controls
+        preload="auto"
+        playsinline
+        width="100%"
+        height="240"
+        data-setup='{}'>
 
-{tracks}
+        <source src="{video_url}" type="video/x-matroska">
 
-</video>
+        {tracks}
 
-<a class="btn" href="{video_url}">
-⬇️ Download
-</a>
+    </video>
+
+</div>
+
+<!-- ========================= FILE CARD ========================= -->
+
+<div class="card">
+
+    <h2>{file["file_name"]}</h2>
+
+    <div class="streaming">
+        🔴 Now Streaming
+    </div>
+
+    <!-- DOWNLOAD -->
+
+    <a class="download-btn" href="{video_url}">
+        ⬇️ Download
+    </a>
+
+    <!-- VLC -->
+
+    <a class="player-btn"
+       href="vlc://{config.BASE_URL}/video/{key}">
+       🟠 VLC Player
+    </a>
+
+    <!-- MX PLAYER -->
+
+    <a class="player-btn"
+       href="intent:{config.BASE_URL}/video/{key}#Intent;package=com.mxtech.videoplayer.ad;end">
+       🔵 MX Player
+    </a>
+
+    <!-- PLAYit -->
+
+    <a class="player-btn"
+       href="intent:{config.BASE_URL}/video/{key}#Intent;package=com.playit.videoplayer;end">
+       ▶️ PLAYit
+    </a>
+
+    <!-- KM PLAYER -->
+
+    <a class="player-btn"
+       href="intent:{config.BASE_URL}/video/{key}#Intent;package=com.kmplayer;end">
+       🟣 KMPlayer
+    </a>
+
+</div>
+
+<!-- ========================= WARNING ========================= -->
+
+<div class="warning">
+
+⚠️ Browser may not support some MKV audio codecs.<br>
+Use VLC or MX Player for best experience.
+
+</div>
+
+<!-- ========================= CHANNELS ========================= -->
+
+<div class="section">
+
+    <h1>Explore Our Universe</h1>
+
+    <p>
+        Discover our channels and intelligent bots
+    </p>
+
+</div>
+
+<div class="card">
+
+    <h2>Our Channels</h2>
+
+    <a class="player-btn"
+       href="{config.CHANNEL_LINK}">
+       📢 Anime_UpdatesAU
+    </a>
+
+</div>
+
+<!-- ========================= BOTS ========================= -->
+
+<div class="card">
+
+    <h2>Our Bots</h2>
+
+    <a class="player-btn"
+       href="{config.DEV_LINK}">
+       🤖 Stream Bot
+    </a>
+
+</div>
+
+<!-- ========================= FOOTER ========================= -->
 
 <div class="footer">
 
-<a class="btn" href="{config.CHANNEL_LINK}">
-📢 Updates Channel
-</a>
-
-<a class="btn" href="{config.DEV_LINK}">
-👨‍💻 Developer
-</a>
+© 2026 Anime_UpdatesAU. All Rights Reserved.
 
 </div>
 
-</div>
+<!-- ========================= CSS ========================= -->
+
+<style>
+
+body{
+    background:#050816;
+    color:white;
+    font-family:sans-serif;
+    margin:0;
+    padding:0;
+}
+
+.topbar{
+    background:#020617;
+    padding:18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:32px;
+    font-weight:bold;
+    color:#ff6b57;
+}
+
+.menu-btn{
+    font-size:30px;
+}
+
+.hero{
+    padding:20px;
+}
+
+.hero h1{
+    font-size:32px;
+    line-height:1.3;
+}
+
+.hero span{
+    color:#ff7b00;
+}
+
+.player-box{
+    padding:15px;
+}
+
+video{
+    width:100%;
+    border-radius:20px;
+}
+
+.card{
+    background:#091227;
+    margin:15px;
+    padding:20px;
+    border-radius:20px;
+}
+
+.card h2{
+    font-size:26px;
+    word-break:break-word;
+}
+
+.streaming{
+    background:#2a1020;
+    color:#ff4f7b;
+    padding:12px;
+    border-radius:12px;
+    display:inline-block;
+    margin-bottom:20px;
+}
+
+.download-btn{
+    display:block;
+    text-decoration:none;
+    background:#ff1654;
+    color:white;
+    text-align:center;
+    padding:16px;
+    border-radius:14px;
+    margin-top:15px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.player-btn{
+    display:block;
+    text-decoration:none;
+    background:#1c2740;
+    color:white;
+    padding:16px;
+    border-radius:14px;
+    margin-top:15px;
+    font-size:22px;
+    text-align:center;
+}
+
+.warning{
+    color:#ffd54f;
+    padding:20px;
+    font-size:20px;
+    text-align:center;
+}
+
+.section{
+    padding:20px;
+}
+
+.section h1{
+    font-size:40px;
+    color:#ff6b57;
+}
+
+.section p{
+    font-size:22px;
+    color:#ccc;
+}
+
+.footer{
+    text-align:center;
+    padding:30px;
+    color:#aaa;
+    font-size:18px;
+}
+
+</style>
 
 <script>
 var player = videojs('player');
@@ -162,8 +348,6 @@ var player = videojs('player');
 
 </body>
 </html>
-
-""")
 
 # ========================= VIDEO STREAM ========================= #
 @app.route("/video/<key>")
