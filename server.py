@@ -165,7 +165,6 @@ var player = videojs('player');
 """)
 
 # ========================= VIDEO STREAM ========================= #
-
 @app.route("/video/<key>")
 def video(key):
 
@@ -174,46 +173,22 @@ def video(key):
     if not file:
         return "Invalid File"
 
-    range_header = request.headers.get("Range", None)
+    async def generate():
 
-    file_size = file.get("file_size", 0)
-
-    start = 0
-    end = file_size - 1
-
-    if range_header:
-
-        range_value = range_header.replace("bytes=", "")
-
-        start = int(range_value.split("-")[0])
-
-        if "-" in range_value:
-            end_part = range_value.split("-")[1]
-            if end_part:
-                end = int(end_part)
-
-    chunk_size = end - start + 1
-
-    async def stream_generator():
-
-        async for chunk in tg.stream_media(
-            file["file_id"],
-            offset=start
-        ):
+        async for chunk in tg.stream_media(file["file_id"]):
             yield chunk
 
-    def generate():
+    loop = asyncio.get_event_loop()
 
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+    async_gen = generate()
 
-        agen = stream_generator()
+    def sync_stream():
 
         while True:
 
             try:
                 chunk = loop.run_until_complete(
-                    agen.__anext__()
+                    async_gen.__anext__()
                 )
 
                 yield chunk
@@ -221,18 +196,14 @@ def video(key):
             except StopAsyncIteration:
                 break
 
-    headers = {
-        "Content-Range": f"bytes {start}-{end}/{file_size}",
-        "Accept-Ranges": "bytes",
-        "Content-Length": str(chunk_size),
-        "Content-Type": "video/mp4"
-    }
-
     return Response(
-        generate(),
-        status=206,
-        headers=headers
+        sync_stream(),
+        content_type="video/mp4",
+        headers={
+            "Accept-Ranges": "bytes"
+        }
     )
+
 
 # ========================= SUBTITLE ========================= #
 
