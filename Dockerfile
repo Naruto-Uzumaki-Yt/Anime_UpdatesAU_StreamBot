@@ -1,20 +1,53 @@
+
 # ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Don't Remove Credit
+# Ask Doubt @AU_Bot_Discussion
+# Owner @Mr_Mohammed_29
 # ------------------------- #
 
-FROM python:3.10
+FROM python:3.10-slim
+
+# =========================
+# WORK DIRECTORY
+# =========================
 
 WORKDIR /app
-COPY . .
 
-RUN pip install -r requirements.txt
+# =========================
+# COPY FILES
+# =========================
 
-CMD gunicorn server:app --bind 0.0.0.0:$PORT & python bot.py
+COPY . /app
+
+# =========================
+# INSTALL DEPENDENCIES
+# =========================
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+# =========================
+# RENDER PORT
+# =========================
+
+ENV PORT=10000
+
+# =========================
+# START BOT + SERVER
+# =========================
+
+CMD gunicorn server:app \
+    --bind 0.0.0.0:$PORT \
+    --workers 1 \
+    --threads 4 \
+    --timeout 120 \
+    & python bot.py
 
 # ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Don't Remove Credit
+# Ask Doubt @AU_Bot_Discussion
+# Owner @Mr_Mohammed_29
 # ------------------------- #
