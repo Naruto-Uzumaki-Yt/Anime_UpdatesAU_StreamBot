@@ -107,7 +107,7 @@ def stream(key):
         height="240"
         data-setup='{}'>
 
-        <source src="{video_url}" type="video/x-matroska">
+        <source src="{video_url}">
 
         {tracks}
 
