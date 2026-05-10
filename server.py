@@ -20,7 +20,8 @@ tg = Client(
     bot_token=config.BOT_TOKEN
 )
 
-tg.start()
+with tg:
+    pass
 
 # ========================= STREAM PAGE ========================= #
 
@@ -380,7 +381,7 @@ def video(key):
         headers={
             "Content-Type": "video/x-matroska",
             "Accept-Ranges": "bytes",
-            "Content-Disposition": f'inline; filename="{file["file_name"]}"'
+            "Content-Disposition": f"inline; filename={file['file_name']}"
         }
     )
 
