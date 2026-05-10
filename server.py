@@ -182,13 +182,30 @@ Use VLC or MX Player for best experience.
 
 </div>
 
+<!-- CHANNELS -->
+
 <div class="card">
 
     <h2>Our Channels</h2>
 
     <a class="player-btn"
-       href="{config.CHANNEL_LINK}">
-       📢 Anime_UpdatesAU
+       href="https://t.me/Anime_UpdatesAU">
+       📢 Updates 
+    </a>
+
+    <a class="player-btn"
+       href="https://t.me/AU_Bot_Discussion">
+       💬 Bot Discussion
+    </a>
+
+    <a class="player-btn"
+       href="https://t.me/amime_in_hindi">
+       🌟 Anime In Hindi
+    </a>
+
+    <a class="player-btn"
+       href="https://t.me/BotsServerDead">
+       🕸 Bot Server 
     </a>
 
 </div>
@@ -200,8 +217,23 @@ Use VLC or MX Player for best experience.
     <h2>Our Bots</h2>
 
     <a class="player-btn"
-       href="{config.DEV_LINK}">
+       href="https://t.me/AU_Stream_bot">
        🤖 Stream Bot
+    </a>
+
+    <a class="player-btn"
+       href="https://t.me/Jinwoo_Rename_bot">
+       📂 Rename Bot
+    </a>
+
+    <a class="player-btn"
+       href="https://t.me/AU_Luffy_Store_bot">
+       📂 File Store Bot
+    </a>
+
+    <a class="player-btn"
+       href="https://t.me/AU_StickerID_bot">
+       🎊 Sticker ID Bot
     </a>
 
 </div>
