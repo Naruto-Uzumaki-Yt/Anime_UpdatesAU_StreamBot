@@ -39,13 +39,7 @@ ENV PORT=10000
 # START BOT + SERVER
 # =========================
 
-CMD gunicorn server:app \
---bind 0.0.0.0:$PORT \
---workers 1 \
---threads 2 \
---timeout 300 \
-& python bot.py
-
+CMD python bot.py & gunicorn server:app --worker-class gevent --workers 1 --bind 0.0.0.0:$PORT
 # ------------------------- #
 # Don't Remove Credit
 # Ask Doubt @AU_Bot_Discussion
