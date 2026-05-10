@@ -104,7 +104,7 @@ def stream(key):
         playsinline
         width="100%"
         height="240"
-        data-setup='{}'>
+        data-setup='{{}}'>
 
         <source src="{video_url}">
 
