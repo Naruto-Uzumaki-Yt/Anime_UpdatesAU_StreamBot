@@ -107,7 +107,7 @@ def stream(key):
         height="240"
         data-setup='{{}}'>
 
-        <source src="{video_url}">
+        <source src="{video_url}" type="video/x-matroska">
 
         {tracks}
 
@@ -408,12 +408,16 @@ def video(key):
 
                 yield chunk
 
+    from urllib.parse import quote
+
+    safe_name = quote(file["file_name"])
+
     return Response(
         generate(),
         headers={
-            "Content-Type": "video/x-matroska",
+            "Content-Type": "video/mp4",
             "Accept-Ranges": "bytes",
-            "Content-Disposition": f"inline; filename={file['file_name']}"
+            "Content-Disposition": f"inline; filename*=UTF-8''{safe_name}"
         }
     )
 
