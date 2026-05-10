@@ -217,76 +217,76 @@ Use VLC or MX Player for best experience.
 
 <style>
 
-body{
+body{{
     background:#050816;
     color:white;
     font-family:sans-serif;
     margin:0;
     padding:0;
-}
+}}
 
-.topbar{
+.topbar{{
     background:#020617;
     padding:18px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-}
+}}
 
-.logo{
+.logo{{
     font-size:32px;
     font-weight:bold;
     color:#ff6b57;
-}
+}}
 
-.menu-btn{
+.menu-btn{{
     font-size:30px;
-}
+}}
 
-.hero{
+.hero{{
     padding:20px;
-}
+}}
 
-.hero h1{
+.hero h1{{
     font-size:32px;
     line-height:1.3;
-}
+}}
 
-.hero span{
+.hero span{{
     color:#ff7b00;
-}
+}}
 
-.player-box{
+.player-box{{
     padding:15px;
-}
+}}
 
-video{
+video{{
     width:100%;
     border-radius:20px;
-}
+}}
 
-.card{
+.card{{
     background:#091227;
     margin:15px;
     padding:20px;
     border-radius:20px;
-}
+}}
 
-.card h2{
+.card h2{{
     font-size:26px;
     word-break:break-word;
-}
+}}
 
-.streaming{
+.streaming{{
     background:#2a1020;
     color:#ff4f7b;
     padding:12px;
     border-radius:12px;
     display:inline-block;
     margin-bottom:20px;
-}
+}}
 
-.download-btn{
+.download-btn{{
     display:block;
     text-decoration:none;
     background:#ff1654;
@@ -297,9 +297,9 @@ video{
     margin-top:15px;
     font-size:22px;
     font-weight:bold;
-}
+}}
 
-.player-btn{
+.player-btn{{
     display:block;
     text-decoration:none;
     background:#1c2740;
@@ -309,35 +309,35 @@ video{
     margin-top:15px;
     font-size:22px;
     text-align:center;
-}
+}}
 
-.warning{
+.warning{{
     color:#ffd54f;
     padding:20px;
     font-size:20px;
     text-align:center;
-}
+}}
 
-.section{
+.section{{
     padding:20px;
-}
+}}
 
-.section h1{
+.section h1{{
     font-size:40px;
     color:#ff6b57;
-}
+}}
 
-.section p{
+.section p{{
     font-size:22px;
     color:#ccc;
-}
+}}
 
-.footer{
+.footer{{
     text-align:center;
     padding:30px;
     color:#aaa;
     font-size:18px;
-}
+}}
 
 </style>
 
