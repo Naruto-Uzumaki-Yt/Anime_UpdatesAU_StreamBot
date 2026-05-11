@@ -103,11 +103,12 @@ def stream(key):
         controls
         preload="auto"
         playsinline
+        crossorigin="anonymous"
         width="100%"
         height="240"
         data-setup='{{}}'>
 
-        <source src="{video_url}" type="video/x-matroska">
+        <source src="{video_url}" type="video/mp4">
 
         {tracks}
 
@@ -135,7 +136,7 @@ def stream(key):
 
     <a class="player-btn"
        href="vlc://{config.BASE_URL}/video/{key}">
-       🟠 VLC Player
+      🟠 Open In VLC
     </a>
 
     <!-- MX PLAYER -->
@@ -165,8 +166,9 @@ def stream(key):
 
 <div class="warning">
 
-⚠️ Browser may not support some MKV audio codecs.<br>
-Use VLC or MX Player for best experience.
+⚠️ Some MKV or HEVC/x265 videos are unsupported in browsers.<br><br>
+
+✅ Use VLC Player or MX Player for smooth playback.
 
 </div>
 
